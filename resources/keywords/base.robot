@@ -3,6 +3,8 @@ Documentation       Arquivo para criação de keywords
 
 Library     RequestsLibrary
 
+Resource    ${EXECDIR}/resources/keywords/base.robot
+
 *** Variables ***
 ${API_URL}              http://marvel.qaninja.academy
 
@@ -20,3 +22,7 @@ Set Client Key
     &{HEADERS}          Create Dictionary       client_key=${client_key}
 
     Set Suite Variable      ${HEADERS}
+
+Back To The Past
+
+    DELETE              ${API_URL}/delorean     headers=${HEADERS}

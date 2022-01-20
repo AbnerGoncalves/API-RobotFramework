@@ -1,20 +1,30 @@
 *** Settings ***
-Documentation       Suite de Testes do cadastro de personagens na API da Marvel 
+Documentation    Suite de Testes do cadastro de personagens na API da Marvel 
 
-Resource    ${EXECDIR}/resources/Keywords/base.robot
+Resource         ${EXECDIR}/resources/Keywords/base.robot
+Resource         ${EXECDIR}/resources/routes/Characters.robot
 
-Library     ${EXECDIR}/resources/factores/Abner.py
+Library          ${EXECDIR}/resources/factores/Abner.py
+Library          ${EXECDIR}/resources/factores/Joao.py
+
+Test Setup       Run Keywords       Set Client Key      toninhoaiaiai@gmail.com
+...              AND                Back To The Past
 
 *** Test Cases ***
 Deve cadastrar um personagem
 
-    Set Client Key      toninhoaiaiai@gmail.com
+    &{personagem}    Factory Abner
+    ${response}      POST New Characters    ${personagem}
 
-    &{personagem}       Factory Abner
+    Status Should Be    200    ${response}
 
-    ${response}         POST        
-    ...                 ${API_URL}/characters        
-    ...                 json=${personagem}
-    ...                 headers=${headers}
+Não deve cadastrar com o mesmo nome
 
-    Status Should Be        200
+    &{personagem}          Factory Joao
+    POST New Characters    ${personagem} 
+
+    ${response}    POST New Characters    ${personagem}
+
+
+    Status Should Be    409                          ${response}
+    Log To Console      ${response.json()}[error]    Character already exists :(
